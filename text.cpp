@@ -78,6 +78,7 @@ void build(char *prefix[NPREF], FILE *f)
       add(prefix, estrdup(buf));
 }
 
+
 /* Пополняет список суффиксов и обновлет StateHashTable */
 void add(char *prefix[NPREF], char *suffix)
 {
@@ -91,6 +92,16 @@ void add(char *prefix[NPREF], char *suffix)
 }
 
 
+/* Добавляет суффикс к состоянию */
+void addsuffix(State *st, char *suffix)
+{
+    Suffix *suf;
+
+    suf = new Suffix;
+    suf->word = suffix;
+    suf->next = st->suf;
+    st->suf = suf;
+}
 
 
 
