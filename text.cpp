@@ -14,6 +14,9 @@ enum {
     MULTIPLIER = 31
 };
 
+/* не бывает словом */
+char NONWORD[] = "\n";
+
 struct Suffix {
     char *word;
     Suffix *next;
@@ -104,9 +107,40 @@ void addsuffix(State *st, char *suffix)
 }
 
 
+void generate(int nwords)
+{
+    State *st;
+    Suffix *suf;
+    char*prefix[NPREF], *w;
+    int nmatch;
+
+    for(int i = 0; i < NPREF; ++i)
+        //переустановка префиксов
+        prefix[i] = NONWORD
+
+    for(int i = 0; i < nwords; ++i) {
+        st = lookup(prefix, false);
+        nmatch = 0;
+        for (suf = st->suf; suf != NULL; suf = suf->next)
+            if (rand() % ++nmatch == 0)
+                w = suf->word;
+            if (sttrcmp(w, NONWORD) == 0)
+                break;
+            printf("%s\n", w);
+            memmove(prefix, prefix+1, (NPREF-1)*sizeof(prefix[0]));
+            prefix[NPREF-1] = w;
+    }
+}
+
+
 
 
 int main(int argc, char const *argv[]) {
-    /* code */
+    int nwords = MAXGEN;
+    char*prefix[NPREF];
+
+    for (int i = 0; i < NPREF; ++i)
+        prefix[i] = NONWORD;
+    generate(nwords);
     return 0;
 }
