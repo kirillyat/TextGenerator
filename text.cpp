@@ -50,8 +50,9 @@ unsigned int hash(char *s[NPREF])
 State* lookup(char *prefix[NPREF], bool create)
 {
     int i, h = hash(prefix);
+    State *st;
 
-    for (State st = StateHashTable[h]; st != NULL; st = st->next) {
+    for (st = StateHashTable[h]; st != NULL; st = st->next) {
         for (i = 0; i < NPREF; ++i)
             if (strcmp(prefix[i], st->pref[i]) != 0)
                 break;
@@ -65,7 +66,7 @@ State* lookup(char *prefix[NPREF], bool create)
             st->pref[i] = prefix[i];
         st->suf = NULL;
         st->next = StateHashTable[h];
-        StateHashTable[h] = sp;
+        StateHashTable[h] = st;
     }
     return st;
 }
@@ -78,7 +79,7 @@ void build(char *prefix[NPREF], FILE *f)
 
     sprintf(fmt, "%%%ds", sizeof(buf)-1);
     while(fscanf(f, fmt, buf) != EOF)
-      add(prefix, estrdup(buf));
+      add(prefix, strdup(buf));
 }
 
 
@@ -116,7 +117,7 @@ void generate(int nwords)
 
     for(int i = 0; i < NPREF; ++i)
         //переустановка префиксов
-        prefix[i] = NONWORD
+        prefix[i] = NONWORD;
 
     for(int i = 0; i < nwords; ++i) {
         st = lookup(prefix, false);
@@ -141,6 +142,8 @@ int main(int argc, char const *argv[]) {
 
     for (int i = 0; i < NPREF; ++i)
         prefix[i] = NONWORD;
+    build(prefix, stdin);
+    add(prefix, NONWORD);
     generate(nwords);
     return 0;
 }
