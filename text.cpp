@@ -6,6 +6,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 
 enum {
     NPREF = 2,
@@ -71,15 +72,15 @@ State* lookup(char *prefix[NPREF], bool create)
     return st;
 }
 
-
-/* Считывает входные данные и строит StateHashTable */
-void build(char *prefix[NPREF], FILE *f)
+/* Добавляет суффикс к состоянию */
+void addsuffix(State *st, char *suffix)
 {
-    char buf[100], fmt[10];
+    Suffix *suf;
 
-    sprintf(fmt, "%%%ds", sizeof(buf)-1);
-    while(fscanf(f, fmt, buf) != EOF)
-      add(prefix, strdup(buf));
+    suf = new Suffix;
+    suf->word = suffix;
+    suf->next = st->suf;
+    st->suf = suf;
 }
 
 
@@ -95,17 +96,20 @@ void add(char *prefix[NPREF], char *suffix)
     prefix[NPREF-1] = suffix;
 }
 
-
-/* Добавляет суффикс к состоянию */
-void addsuffix(State *st, char *suffix)
+/* Считывает входные данные и строит StateHashTable */
+void build(char *prefix[NPREF], FILE *f)
 {
-    Suffix *suf;
+    char buf[100], fmt[10];
 
-    suf = new Suffix;
-    suf->word = suffix;
-    suf->next = st->suf;
-    st->suf = suf;
+    sprintf(fmt, "%%%ds", sizeof(buf)-1);
+    while(fscanf(f, fmt, buf) != EOF)
+      add(prefix, strdup(buf));
 }
+
+
+
+
+
 
 
 void generate(int nwords)
@@ -125,7 +129,7 @@ void generate(int nwords)
         for (suf = st->suf; suf != NULL; suf = suf->next)
             if (rand() % ++nmatch == 0)
                 w = suf->word;
-            if (sttrcmp(w, NONWORD) == 0)
+            if (strcmp(w, NONWORD) == 0)
                 break;
             printf("%s\n", w);
             memmove(prefix, prefix+1, (NPREF-1)*sizeof(prefix[0]));
